@@ -1,0 +1,30 @@
+version: '3'
+services:
+  
+  #MySQL Service
+  pgdb:
+    image: postgres
+    container_name: pgdb
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: simplebank
+      POSTGRES_USER: pgsuperuser
+      POSTGRES_PASSWORD: Admin@1
+    volumes:
+      - sbpdata:/var/lib/postgresql/data/
+      # - ./mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network
+
+#Docker Networks
+networks:
+  app-network:
+    driver: bridge
+
+#Volumes
+volumes:
+  sbpdata:
+    driver: local
