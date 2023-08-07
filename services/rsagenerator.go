@@ -40,17 +40,21 @@ func (rsaGen RSAGeneartor) Generate(size int) {
 		fmt.Println("Failed to save private key:", err)
 		return
 	}
+	//todo concurency here
 
 	if err := rsaGen.savePublicKeyToFile(publicKey, publicKeyFile); err != nil {
 		fmt.Println("Failed to save public key:", err)
 		return
 	}
+	//todo concurency here
 
 	fmt.Println("Private and public key files have been generated successfully.")
 }
 
 func (RSAGeneartor) generateKeyPair(bits int) (*rsa.PrivateKey, error) {
 	privateKey, err := rsa.GenerateKey(rand.Reader, bits)
+
+	//todo concurency here
 	if err != nil {
 		return nil, err
 	}

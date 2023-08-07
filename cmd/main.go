@@ -25,13 +25,9 @@ func main() {
 		log.Fatalln("failed to load environment variables")
 	}
 
-	//register  custom commands here
-	var dbMigrate db.DBMigration
-	commands.Register(commands.NewCreateMigrationCommand(c.MigrationUrl, dbMigrate))
-	commands.Register(commands.NewMigrateUpCommand(dbMigrate, c))
-	commands.Register(commands.NewMigrateDownCommand(dbMigrate, c))
+	ConsoleCommands(c)
 
-	//if not commands(non-flag argument) is supplied then run web server
+	// flag.Parsed() can be used to check whether flag.Parse() is called already
 	flag.Parse()
 
 	//if no command is supplied, run the web server
@@ -50,4 +46,13 @@ func WebServer(config config.Config) {
 
 	routes.Register(router, db, config)
 	router.Run(config.AppPort) //0.0.0.0:8080
+}
+
+// register  custom commands here
+func ConsoleCommands(c config.Config) {
+	var dbMigrate db.DBMigration
+	commands.Register(commands.NewCreateMigrationCommand(c.MigrationUrl, dbMigrate))
+	commands.Register(commands.NewMigrateUpCommand(dbMigrate, c))
+	commands.Register(commands.NewMigrateDownCommand(dbMigrate, c))
+	commands.Register(commands.NewGenerateRSACommand())
 }

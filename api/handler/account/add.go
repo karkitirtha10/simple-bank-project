@@ -7,7 +7,12 @@ import (
 	"github.com/karkitirtha10/simplebank/model"
 )
 
-func (ctlr AccountHandler) Add(c *gin.Context) {
+type InsertAccountResult struct {
+	accountId uint64
+	err       error
+}
+
+func (handler AccountHandler) Add(c *gin.Context) {
 	var accountInput model.AddAccountInput
 
 	//validation. binding error
@@ -32,8 +37,8 @@ func (ctlr AccountHandler) Add(c *gin.Context) {
 
 	// query := "INSERT INTO accounts (owner,balance,currency) VALUES (:owner,:balance,:currency) RETURNING id"
 	//($1,$2,$3) shoud be used instead of (?,?,?) for DB.QueryRow
-	query := "INSERT INTO accounts (owner,balance,currency) VALUES ($1,$2,$3) RETURNING id"
-	// result, err := ctlr.DB.NamedExec(query, &account)
+	// query := "INSERT INTO accounts (owner,balance,currency) VALUES ($1,$2,$3) RETURNING id"
+	// result, err := handler.DB.NamedExec(query, &account)
 	// if err != nil {
 	// 	c.JSON(http.StatusInternalServerError, gin.H{
 	// 		"error": err.Error(),
@@ -41,14 +46,15 @@ func (ctlr AccountHandler) Add(c *gin.Context) {
 	// 	return
 	// }
 
-	var accountId uint64
-	err := ctlr.DB.QueryRowx(query, accountInput.Owner, float64(0.00), accountInput.Currency).Scan(&accountId)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
+	// query := "INSERT INTO accounts (owner,balance,currency) VALUES ($1,$2,$3) RETURNING id"
+	// var accountId uint64
+	// err := handler.DB.QueryRowx(query, accountInput.Owner, float64(0.00), accountInput.Currency).Scan(&accountId)
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{
+	// 		"error": err.Error(),
+	// 	})
+	// 	return
+	// }
 	/////////////
 
 	// accountId, err := result.LastInsertId()
@@ -59,9 +65,32 @@ func (ctlr AccountHandler) Add(c *gin.Context) {
 	// 	return
 	// }
 
-	c.JSON(http.StatusOK, gin.H{
+	ch := make(chan InsertAccountResult)
+
+	go func(ch chan InsertAccountResult) {
+		var insertAccountResult InsertAccountResult
+
+		insertAccountResult.accountId,
+			insertAccountResult.err = handler.Repository.Create(
+			accountInput.Owner,
+			float64(0.00),
+			accountInput.Currency,
+		)
+		ch <- insertAccountResult
+	}(ch)
+
+	insertAccountResult := <-ch
+
+	if insertAccountResult.err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": insertAccountResult.err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
 		"message": "successfully added new account",
-		"data":    accountId,
+		"data":    insertAccountResult.accountId,
 	})
 
 }
