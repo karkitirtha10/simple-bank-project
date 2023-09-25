@@ -5,8 +5,13 @@ import (
 	"github.com/karkitirtha10/simplebank/model"
 )
 
+type InsertAccountResult struct {
+	AccountId uint64
+	Err       error
+}
+
 type IAccountRepository interface {
-	Create(string, float64, string) (uint64, error)
+	Create(string, float64, string) InsertAccountResult
 	GetAll() ([]model.Account, error)
 }
 
@@ -14,7 +19,7 @@ type AccountRepository struct {
 	DB *sqlx.DB
 }
 
-func (r AccountRepository) Create(owner string, balance float64, currency string) (uint64, error) {
+func (r AccountRepository) Create(owner string, balance float64, currency string) InsertAccountResult {
 	// result, err := ctlr.db.NamedExec(query, &account)
 	// if err != nil {
 	// 	c.JSON(http.StatusInternalServerError, gin.H{
@@ -30,8 +35,8 @@ func (r AccountRepository) Create(owner string, balance float64, currency string
 
 	var accountId uint64
 	err := r.DB.QueryRowx(query, owner, balance, currency).Scan(&accountId)
-
-	return accountId, err
+	return InsertAccountResult{accountId, err}
+	// return accountId, err
 }
 
 func (r AccountRepository) GetAll() ([]model.Account, error) {

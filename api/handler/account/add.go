@@ -4,19 +4,22 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator"
 	"github.com/karkitirtha10/simplebank/model"
+	"github.com/karkitirtha10/simplebank/repositories"
 )
-
-type InsertAccountResult struct {
-	accountId uint64
-	err       error
-}
 
 func (handler AccountHandler) Add(c *gin.Context) {
 	var accountInput model.AddAccountInput
 
 	//validation. binding error
 	if err := c.ShouldBindJSON(&accountInput); err != nil {
+		
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			c.JSON(http.StatusBadRequest, gin.H{"errors": errs})
+			return
+		}
+		
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
@@ -65,32 +68,35 @@ func (handler AccountHandler) Add(c *gin.Context) {
 	// 	return
 	// }
 
-	ch := make(chan InsertAccountResult)
+	ch := make(chan repositories.InsertAccountResult)
 
-	go func(ch chan InsertAccountResult) {
-		var insertAccountResult InsertAccountResult
-
-		insertAccountResult.accountId,
-			insertAccountResult.err = handler.Repository.Create(
+	go func(ch chan repositories.InsertAccountResult) {
+		ch <- handler.Repository.Create(
 			accountInput.Owner,
 			float64(0.00),
 			accountInput.Currency,
 		)
-		ch <- insertAccountResult
 	}(ch)
 
 	insertAccountResult := <-ch
 
-	if insertAccountResult.err != nil {
+	if insertAccountResult.Err != nil {
+
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": insertAccountResult.err.Error(),
+			"error": insertAccountResult.Err.Error(),
 		})
 		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "successfully added new account",
-		"data":    insertAccountResult.accountId,
+		"data":    insertAccountResult.AccountId,
 	})
 
 }
+
+// go func(ch chan int) {
+
+// 	ch <- function1()
+
+// }(ch)

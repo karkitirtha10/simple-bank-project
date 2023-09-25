@@ -9,7 +9,7 @@ import (
 type GenerateRSA struct{}
 
 func (GenerateRSA) Name() string {
-	return string("generate:rsa")
+	return string("generate-rsa")
 }
 
 func (cMigtn GenerateRSA) Handle() {

@@ -12,4 +12,9 @@ func Register(r *gin.Engine, db *sqlx.DB, config config.Config) {
 	accountHandler := handler.NewAccountHandler(db)
 	r.POST("/api/v1/accounts", accountHandler.Add)
 	r.GET("/api/v1/accounts", accountHandler.List)
+
+	//register api routes here
+	userHandler := handler.NewUserHandler(db)
+	r.POST("/api/v1/users", userHandler.Add)
+	// r.GET("/api/v1/users", userHandler.List)
 }

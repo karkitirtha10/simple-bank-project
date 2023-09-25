@@ -14,8 +14,15 @@ type IAuth interface {
 	ClaimsFromToken(tokenString string, publicKey string) (jwt.Claims, error)
 }
 
+type LoadPrivateKeyFileResult struct {
+	PrivateKey *rsa.PrivateKey
+	err        error
+}
+
 // define
-type Auth struct{}
+type Auth struct {
+	RSAGenerator RSAGeneartor
+}
 
 func (a Auth) CreateToken(key *rsa.PrivateKey) (string, error) {
 	//   key = /* Load key from somewhere, for example a file SigningMethodRS256*/
@@ -25,7 +32,16 @@ func (a Auth) CreateToken(key *rsa.PrivateKey) (string, error) {
 			"id":        2,
 		})
 
-	return t.SignedString(key)
+	ch := make(chan LoadPrivateKeyFileResult)
+	go func(chan LoadPrivateKeyFileResult) {
+		var lPKFResult LoadPrivateKeyFileResult
+		lPKFResult.PrivateKey, lPKFResult.err = a.RSAGenerator.LoadPrivateKeyFromFile()
+		ch <- lPKFResult
+	}(ch)
+
+	loadPrivateKeyFileResult := <-ch
+
+	return t.SignedString(loadPrivateKeyFileResult.PrivateKey)
 }
 
 func (a Auth) ClaimsFromToken(tokenString string, publicKey string) (jwt.Claims, error) {

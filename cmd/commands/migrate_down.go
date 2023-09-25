@@ -14,7 +14,7 @@ type MigrateDown struct {
 }
 
 func (MigrateDown) Name() string {
-	return string("migration:down")
+	return string("migration-down")
 }
 
 func (mDown MigrateDown) Handle() {

@@ -14,7 +14,7 @@ type MigrateUp struct {
 }
 
 func (MigrateUp) Name() string {
-	return string("migration:up")
+	return string("migration-up")
 }
 
 func (mUp MigrateUp) Handle() {

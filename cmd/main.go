@@ -44,6 +44,12 @@ func WebServer(config config.Config) {
 	router := gin.Default() //logger and recovery middleware included by default
 	db := sqlx.MustConnect("postgres", config.DbUrl)
 
+	// var user model.User
+	// err := db.QueryRowx("SELECT * FROM users LIMIT 1").StructScan(&user)
+	// fmt.Println(err)
+	// fmt.Println(user)
+	// return
+
 	routes.Register(router, db, config)
 	router.Run(config.AppPort) //0.0.0.0:8080
 }

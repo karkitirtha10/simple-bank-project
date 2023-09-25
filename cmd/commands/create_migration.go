@@ -15,7 +15,7 @@ type CreateMigration struct {
 }
 
 func (CreateMigration) Name() string {
-	return string("migration:create")
+	return string("migration-create")
 }
 
 func (cMigtn CreateMigration) Handle() {

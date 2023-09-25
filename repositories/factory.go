@@ -9,6 +9,12 @@ func NewAccountRepository(db *sqlx.DB) IAccountRepository {
 	}
 }
 
+func NewUserRepository(db *sqlx.DB) IUserRepository {
+	return &UserRepository{
+		DB: db,
+	}
+}
+
 ///////////////////old code///////////////////////////////
 /*
 import (
