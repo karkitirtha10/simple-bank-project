@@ -9,6 +9,7 @@ GOBUILD_FLAGS := -ldflags="-s -w"
 GOFILES := cmd/main.go
 DIST_DIR := ./dist
 step ?= 1
+OAUTH_CLI := cmd/oauth/main.go
 
 .PHONY: build clean run migration-create migration-up migration-down generate-rsa docker-up
 
