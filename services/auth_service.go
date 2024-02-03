@@ -8,34 +8,23 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-// declare
-type IAuth interface {
-	CreateToken(*rsa.PrivateKey) (string, error)
-	ClaimsFromToken(tokenString string, publicKey string) (jwt.Claims, error)
+type AuthService struct {
+	RSAGenerator IRSAGeneartor
 }
 
-type LoadPrivateKeyFileResult struct {
-	PrivateKey *rsa.PrivateKey
-	err        error
-}
-
-// define
-type Auth struct {
-	RSAGenerator RSAGeneartor
-}
-
-func (a Auth) CreateToken(key *rsa.PrivateKey) (string, error) {
+func (a AuthService) CreateToken(claims jwt.MapClaims, privateKeyPath string) (string, error) {
 	//   key = /* Load key from somewhere, for example a file SigningMethodRS256*/
-	t := jwt.NewWithClaims(jwt.SigningMethodRS256,
-		jwt.MapClaims{
-			"expiresIn": "john",
-			"id":        2,
-		})
+
+	t := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+	// jwt.MapClaims{
+	// 	"expiresIn": "john",
+	// 	"id":        2,
+	// }
 
 	ch := make(chan LoadPrivateKeyFileResult)
 	go func(chan LoadPrivateKeyFileResult) {
 		var lPKFResult LoadPrivateKeyFileResult
-		lPKFResult.PrivateKey, lPKFResult.err = a.RSAGenerator.LoadPrivateKeyFromFile()
+		lPKFResult.PrivateKey, lPKFResult.err = a.RSAGenerator.LoadPrivateKeyFromFile(privateKeyPath) //eg: "storage/private.key"
 		ch <- lPKFResult
 	}(ch)
 
@@ -44,7 +33,7 @@ func (a Auth) CreateToken(key *rsa.PrivateKey) (string, error) {
 	return t.SignedString(loadPrivateKeyFileResult.PrivateKey)
 }
 
-func (a Auth) ClaimsFromToken(tokenString string, publicKey string) (jwt.Claims, error) {
+func (a AuthService) ClaimsFromToken(tokenString string, publicKey string) (jwt.Claims, error) {
 	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
 		// _, ok := t.Method.(*jwt.SigningMethodRS256)
 		_, ok := t.Method.(*jwt.SigningMethodRSA)
@@ -69,6 +58,19 @@ func (a Auth) ClaimsFromToken(tokenString string, publicKey string) (jwt.Claims,
 
 	return nil, fmt.Errorf("invalid token")
 }
+
+// declare
+type IAuthService interface {
+	CreateToken(*rsa.PrivateKey) (string, error)
+	ClaimsFromToken(tokenString string, publicKey string) (jwt.Claims, error)
+}
+
+type LoadPrivateKeyFileResult struct {
+	PrivateKey *rsa.PrivateKey
+	err        error
+}
+
+// define
 
 // func new() (Auth){
 // 	return Auth{}
