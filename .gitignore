@@ -1,1 +1,13 @@
 .env
+/dist/*
+/storage/*.key
+.env
+.env.testing
+.env.backup
+.env.production
+/.idea
+/.vscode
+auth.json
+/.docker/dev/mysql/db_data
+/.docker/dev/nginx/logs
+

@@ -1,25 +1,25 @@
 package handler
 
 import (
+	"github.com/karkitirtha10/simplebank/models/inputmodel"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
-	"github.com/karkitirtha10/simplebank/model"
 	"github.com/karkitirtha10/simplebank/repositories"
 )
 
-func (handler AccountHandler) Add(c *gin.Context) {
-	var accountInput model.AddAccountInput
+func (yo AccountHandler) Add(c *gin.Context) {
+	var accountInput inputmodel.AddAccountInput
 
 	//validation. binding error
 	if err := c.ShouldBindJSON(&accountInput); err != nil {
-		
+
 		if errs, ok := err.(validator.ValidationErrors); ok {
 			c.JSON(http.StatusBadRequest, gin.H{"errors": errs})
 			return
 		}
-		
+
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
@@ -71,8 +71,8 @@ func (handler AccountHandler) Add(c *gin.Context) {
 	ch := make(chan repositories.InsertAccountResult)
 
 	go func(ch chan repositories.InsertAccountResult) {
-		ch <- handler.Repository.Create(
-			accountInput.Owner,
+		ch <- yo.Repository.Create(
+			//accountInput.Owner,
 			float64(0.00),
 			accountInput.Currency,
 		)

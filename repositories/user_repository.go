@@ -1,43 +1,18 @@
 package repositories
 
 import (
+	"github.com/karkitirtha10/simplebank/models/dbmodel"
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/karkitirtha10/simplebank/model"
 )
-
-// user result set
-type InsertUserResult struct {
-	UserID string
-	Err    error
-}
-
-type UserResult struct {
-	User model.User
-	Err  error
-}
-
-// user repo
-type IUserRepository interface {
-	FindForEmail(ch chan UserResult, email string, cols string)
-
-	Create(
-		ch chan InsertUserResult,
-		name string,
-		email string,
-		password []byte,
-		emailVerifiedAt time.Time,
-		active uint8,
-	)
-}
 
 type UserRepository struct {
 	DB *sqlx.DB
 }
 
 func (repo UserRepository) FindForEmail(ch chan UserResult, email string, cols string) {
-	var user model.User
+	var user dbmodel.User
 	err := repo.DB.QueryRowx("SELECT "+cols+" FROM users WHERE u_email = $1 LIMIT 1", email).StructScan(&user)
 	ch <- UserResult{user, err}
 }
@@ -69,3 +44,29 @@ func (repo UserRepository) Create(
 
 	ch <- InsertUserResult{userId, err}
 }
+
+type IUserRepository interface {
+	FindForEmail(ch chan UserResult, email string, cols string)
+
+	Create(
+		ch chan InsertUserResult,
+		name string,
+		email string,
+		password []byte,
+		emailVerifiedAt time.Time,
+		active uint8,
+	)
+}
+
+// user result set
+type InsertUserResult struct {
+	UserID string
+	Err    error
+}
+
+type UserResult struct {
+	User dbmodel.User
+	Err  error
+}
+
+// user repo

@@ -22,7 +22,7 @@ type LoadPrivateKeyFileResult struct {
 
 // define
 type Auth struct {
-	RSAGenerator services.IRSAGeneartor
+	RSAGenerator services.IRSAGenerator
 }
 
 func (a Auth) CreateToken(claims jwt.MapClaims) (string, error) {
@@ -39,7 +39,7 @@ func (a Auth) CreateToken(claims jwt.MapClaims) (string, error) {
 	ch := make(chan LoadPrivateKeyFileResult)
 	go func(chan LoadPrivateKeyFileResult) {
 		var lPKFResult LoadPrivateKeyFileResult
-		lPKFResult.PrivateKey, lPKFResult.err = a.RSAGenerator.LoadPrivateKeyFromFile()
+		lPKFResult.PrivateKey, lPKFResult.err = a.RSAGenerator.LoadPrivateKeyFromFile("storage/private.key")
 		ch <- lPKFResult
 	}(ch)
 

@@ -8,12 +8,13 @@ package services
 // )
 
 // /////////////////new code///////////////////////////////
-func NewAuth() IAuth {
-	return &Auth{}
+func NewAuthService() *AuthService {
+	return &AuthService{NewRSAGenerator()}
 }
 
-func NewRSAGenerator() IRSAGeneartor {
-	return &RSAGeneartor{}
+func NewRSAGenerator() *RSAGenerator {
+
+	return &RSAGenerator{}
 }
 
 ///////////////////old code///////////////////////////////
@@ -29,8 +30,8 @@ func (f Factory) NewAuth() IAuth {
 	return &Auth{}
 }
 
-func (f Factory) NewRSAGenerator() IRSAGeneartor {
-	return &RSAGeneartor{}
+func (f Factory) NewRSAGenerator() IRSAGenerator {
+	return &RSAGenerator{}
 }
 
 // instates factory

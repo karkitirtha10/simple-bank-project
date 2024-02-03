@@ -1,6 +1,40 @@
 package main
 
 import (
+	"github.com/gin-gonic/gin"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+
+	"github.com/karkitirtha10/simplebank/api/routes"
+
+	"github.com/karkitirtha10/simplebank/config"
+	"github.com/karkitirtha10/simplebank/db"
+)
+
+func main() {
+	//load configuration values
+	c := config.LoadConfig()
+	WebServer(c)
+}
+
+// WebServer run server here
+func WebServer(config config.Config) {
+
+	router := gin.Default() //logger and recovery middleware included by default
+	// db := sqlx.MustConnect("postgres", config.DbUrl)
+	db := db.Connection(config.DbUrl)
+	//apis routes
+	routes.Register(router, db, config)
+
+	router.Run(config.AppPort) //0.0.0.0:8080
+}
+
+/*
+* old code
+ */
+
+/*
+import (
 	"flag"
 	"log"
 
@@ -44,11 +78,7 @@ func WebServer(config config.Config) {
 	router := gin.Default() //logger and recovery middleware included by default
 	db := sqlx.MustConnect("postgres", config.DbUrl)
 
-	// var user model.User
-	// err := db.QueryRowx("SELECT * FROM users LIMIT 1").StructScan(&user)
-	// fmt.Println(err)
-	// fmt.Println(user)
-	// return
+	//migrate -path ./db/migrations -database "postgresql://pgsuperuser:Admin@1@localhost:5432/simplebank?sslmode=disable" up
 
 	routes.Register(router, db, config)
 	router.Run(config.AppPort) //0.0.0.0:8080
@@ -62,3 +92,4 @@ func ConsoleCommands(c config.Config) {
 	commands.Register(commands.NewMigrateDownCommand(dbMigrate, c))
 	commands.Register(commands.NewGenerateRSACommand())
 }
+*/

@@ -1,24 +1,20 @@
-package commands
+package command
 
 import (
-	"fmt"
-
 	"github.com/karkitirtha10/simplebank/services"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-type GenerateRSA struct{}
-
-func (GenerateRSA) Name() string {
-	return string("generate-rsa")
-}
-
-func (cMigtn GenerateRSA) Handle() {
-	// _ := flag.NewFlagSet(cMigtn.Name(), flag.ExitOnError)
-	rsa := services.RSAGeneartor{}
-	rsa.Generate(2048)
-	fmt.Printf("prvate/public key pair generated success fully at " + services.PRIVATE_KEY_FILE_NAME + " and " + services.PUBLIC_KEY_FILE_NAME)
-}
-
-func NewGenerateRSACommand() *GenerateRSA {
-	return &GenerateRSA{}
+var generateRSA = &cobra.Command{
+	Use:   "generate-rsa",
+	Short: "command to generate private public key pair",
+	Run: func(cmd *cobra.Command, args []string) {
+		rsa := services.RSAGenerator{}
+		rsa.Generate(
+			2048,
+			viper.GetString("PRIVATE_KEY_PATH"),
+			viper.GetString("PUBLIC_KEY_PATH"),
+		)
+	},
 }

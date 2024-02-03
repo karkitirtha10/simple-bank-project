@@ -9,11 +9,11 @@ import (
 	"os"
 )
 
-// define
-type RSAGeneartor struct{}
+// RSAGenerator generates private public key pair
+type RSAGenerator struct{}
 
-func (rsaGen RSAGeneartor) Generate(size int, privateKeyPath string, publicKeyPath string) {
-	privateKey, err := rsaGen.generateKeyPair(size) //2048
+func (yo RSAGenerator) Generate(size int, privateKeyPath string, publicKeyPath string) {
+	privateKey, err := yo.generateKeyPair(size) //2048
 	if err != nil {
 		fmt.Println("Failed to generate private key:", err)
 		return
@@ -21,13 +21,13 @@ func (rsaGen RSAGeneartor) Generate(size int, privateKeyPath string, publicKeyPa
 
 	publicKey := &privateKey.PublicKey
 
-	if err := rsaGen.savePrivateKeyToFile(privateKey, privateKeyPath); err != nil {
+	if err := yo.savePrivateKeyToFile(privateKey, privateKeyPath); err != nil {
 		fmt.Println("Failed to save private key:", err)
 		return
 	}
 	//todo concurency here
 
-	if err := rsaGen.savePublicKeyToFile(publicKey, publicKeyPath); err != nil {
+	if err := yo.savePublicKeyToFile(publicKey, publicKeyPath); err != nil {
 		fmt.Println("Failed to save public key:", err)
 		return
 	}
@@ -36,7 +36,7 @@ func (rsaGen RSAGeneartor) Generate(size int, privateKeyPath string, publicKeyPa
 	fmt.Println("Private and public key files have been generated successfully.")
 }
 
-func (RSAGeneartor) generateKeyPair(bits int) (*rsa.PrivateKey, error) {
+func (RSAGenerator) generateKeyPair(bits int) (*rsa.PrivateKey, error) {
 	privateKey, err := rsa.GenerateKey(rand.Reader, bits)
 
 	//todo concurency here
@@ -47,12 +47,12 @@ func (RSAGeneartor) generateKeyPair(bits int) (*rsa.PrivateKey, error) {
 	return privateKey, nil
 }
 
-func (RSAGeneartor) savePrivateKeyToFile(privateKey *rsa.PrivateKey, filename string) error {
+func (yo RSAGenerator) savePrivateKeyToFile(privateKey *rsa.PrivateKey, filename string) error {
 	file, err := os.Create(filename)
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer yo.closeFile(file)
 
 	privateKeyBytes := x509.MarshalPKCS1PrivateKey(privateKey)
 	privateKeyPEM := &pem.Block{
@@ -67,12 +67,12 @@ func (RSAGeneartor) savePrivateKeyToFile(privateKey *rsa.PrivateKey, filename st
 	return nil
 }
 
-func (RSAGeneartor) savePublicKeyToFile(publicKey *rsa.PublicKey, filename string) error {
+func (yo RSAGenerator) savePublicKeyToFile(publicKey *rsa.PublicKey, filename string) error {
 	file, err := os.Create(filename)
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer yo.closeFile(file)
 
 	publicKeyBytes, err := x509.MarshalPKIXPublicKey(publicKey)
 	if err != nil {
@@ -91,7 +91,7 @@ func (RSAGeneartor) savePublicKeyToFile(publicKey *rsa.PublicKey, filename strin
 	return nil
 }
 
-func (RSAGeneartor) LoadPrivateKeyFromFile(privateKeyPath string) (*rsa.PrivateKey, error) {
+func (RSAGenerator) LoadPrivateKeyFromFile(privateKeyPath string) (*rsa.PrivateKey, error) {
 	privateKeyData, err := os.ReadFile(privateKeyPath)
 	if err != nil {
 		return nil, err
@@ -110,7 +110,7 @@ func (RSAGeneartor) LoadPrivateKeyFromFile(privateKeyPath string) (*rsa.PrivateK
 	return privateKey, nil
 }
 
-func (RSAGeneartor) LoadPublicKeyFromFile(publicKeyPath string) (*rsa.PublicKey, error) {
+func (RSAGenerator) LoadPublicKeyFromFile(publicKeyPath string) (*rsa.PublicKey, error) {
 	publicKeyData, err := os.ReadFile(publicKeyPath)
 	if err != nil {
 		return nil, err
@@ -129,8 +129,15 @@ func (RSAGeneartor) LoadPublicKeyFromFile(publicKeyPath string) (*rsa.PublicKey,
 	return publicKey, nil
 }
 
-// declare
-type IRSAGeneartor interface {
+func (RSAGenerator) closeFile(file *os.File) {
+	err := file.Close()
+	if err != nil {
+		panic(err.Error())
+	}
+}
+
+// IRSAGenerator is interface for RSAGenerator
+type IRSAGenerator interface {
 	Generate(size int, privateKeyPath string, publicKeyPath string)
 	LoadPrivateKeyFromFile(privateKeyPath string) (*rsa.PrivateKey, error)
 	LoadPublicKeyFromFile(publicKeyPath string) (*rsa.PublicKey, error)

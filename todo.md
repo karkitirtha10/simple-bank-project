@@ -3,6 +3,7 @@
 - [] create extension uuid_issop
 - [] add this postgress extension in postgress
 - [] in docker 
+- not needed as uuid/ulid will be sent from application instead of generating at db end
 
 # entries table
 - [] refactor entries table as transactions.

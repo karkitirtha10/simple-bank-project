@@ -2,6 +2,7 @@
 
 # Variables
 APP_NAME := simple-bank
+CLI_APP_NAME := simple-bank-cli
 GO := go
 # GOCMD := $(GO) build
 GOBUILD_FLAGS := -ldflags="-s -w"
@@ -11,7 +12,7 @@ DIST_DIR := ./dist
 step ?= 1
 OAUTH_CLI := cmd/oauth/main.go
 
-.PHONY: build clean run migration-create migration-up migration-down generate-rsa docker-up
+.PHONY: build clean run generate-rsa build-cli migration-create migration-up migration-down docker-up 
 
 # Build the project
 build: clean
@@ -27,8 +28,14 @@ clean:
 run: build
 	$(DIST_DIR)/$(APP_NAME)
 
-migration-create: build
-	$(DIST_DIR)/$(APP_NAME) migration-create -migration_name=$(name)
+build-cli:
+	$(GO) build $(GOBUILD_FLAGS) -o $(DIST_DIR)/$(CLI_APP_NAME) cmd/cli/main.go
+
+# generate private/public key value pair
+generate-rsa: build-cli
+	$(DIST_DIR)/$(CLI_APP_NAME) generate-rsa 
+
+
 	
 # migrate create -ext sql -dir pkg/common/db/migration -seq $(name)
 
@@ -38,10 +45,6 @@ migration-up: build
 migration-down: build
 	$(DIST_DIR)/$(APP_NAME) migration-down -migrate_step=$(step)
 
-# generate private/public key value pair
-generate-rsa: build
-	$(DIST_DIR)/$(APP_NAME) generate-rsa 
-
 docker-up:
 	docker-compose up -d	
 
@@ -50,7 +53,9 @@ docker-up:
 # Help target to display available targets
 help:
 	@echo "Available targets:"
-	@echo "  build        : Build the project"
+	@echo "  build        : Build the simple bank app"
 	@echo "  clean        : Clean build artifacts"
 	@echo "  run          : Build and run the project"
 	@echo "  help         : Display this help message"
+	@echo "  build-cli    : Build the cli project"
+	@echo "  generate-rsa : generate rsa key pair using path defined in env file"

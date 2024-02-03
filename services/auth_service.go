@@ -9,7 +9,7 @@ import (
 )
 
 type AuthService struct {
-	RSAGenerator IRSAGeneartor
+	RSAGenerator IRSAGenerator
 }
 
 func (a AuthService) CreateToken(claims jwt.MapClaims, privateKeyPath string) (string, error) {
@@ -69,9 +69,3 @@ type LoadPrivateKeyFileResult struct {
 	PrivateKey *rsa.PrivateKey
 	err        error
 }
-
-// define
-
-// func new() (Auth){
-// 	return Auth{}
-// }

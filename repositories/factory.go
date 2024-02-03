@@ -15,6 +15,12 @@ func NewUserRepository(db *sqlx.DB) IUserRepository {
 	}
 }
 
+func NewOAuthClientRepository(db *sqlx.DB) IOAuthClientRepository {
+	return &OAuthClientRepository{
+		DB: db,
+	}
+}
+
 ///////////////////old code///////////////////////////////
 /*
 import (

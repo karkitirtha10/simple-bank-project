@@ -1,17 +1,17 @@
 package handler
 
 import (
+	"github.com/karkitirtha10/simplebank/models/inputmodel"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/karkitirtha10/simplebank/model"
 	"github.com/karkitirtha10/simplebank/repositories"
 	"golang.org/x/crypto/bcrypt"
 )
 
 func (handler UserHandler) Add(c *gin.Context) {
-	var userInput model.AddUserInput
+	var userInput inputmodel.AddUserInput
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -36,10 +36,10 @@ func (handler UserHandler) Add(c *gin.Context) {
 		time.Now(),
 		1,
 	)
-
 	userResult := <-ch
 	// 	if err == sql.ErrNoRows {
 	if userResult.Err != nil {
+
 		ch := make(chan repositories.UserResult)
 		go handler.UserRepository.FindForEmail(ch, userInput.Email, "u_email")
 
@@ -56,9 +56,9 @@ func (handler UserHandler) Add(c *gin.Context) {
 		return
 	}
 
+	c.Header("Location", userResult.UserID)
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "successfully added new user",
 	})
-	c.Header("Location", userResult.UserID)
 
 }

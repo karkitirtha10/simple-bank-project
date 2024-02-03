@@ -2,7 +2,8 @@ package handler
 
 import (
 	"github.com/jmoiron/sqlx"
-	handler "github.com/karkitirtha10/simplebank/api/handler/account"
+	accountHandler "github.com/karkitirtha10/simplebank/api/handler/account"
+	authHandler "github.com/karkitirtha10/simplebank/api/handler/auth"
 	usrhandler "github.com/karkitirtha10/simplebank/api/handler/user"
 
 	//"github.com/karkitirtha10/simplebank/config"
@@ -11,8 +12,8 @@ import (
 )
 
 // /////////////////new code///////////////////////////////
-func NewAccountHandler(db *sqlx.DB) *handler.AccountHandler {
-	return &handler.AccountHandler{
+func NewAccountHandler(db *sqlx.DB) *accountHandler.AccountHandler {
+	return &accountHandler.AccountHandler{
 		DB:         db,
 		Repository: repositories.NewAccountRepository(db),
 	}
@@ -20,6 +21,13 @@ func NewAccountHandler(db *sqlx.DB) *handler.AccountHandler {
 
 func NewUserHandler(db *sqlx.DB) *usrhandler.UserHandler {
 	return &usrhandler.UserHandler{
+		UserRepository: repositories.NewUserRepository(db),
+	}
+}
+
+func NewAuthHandler(db *sqlx.DB) *authHandler.AuthHandler {
+	return &authHandler.AuthHandler{
+		DB:             db,
 		UserRepository: repositories.NewUserRepository(db),
 	}
 }

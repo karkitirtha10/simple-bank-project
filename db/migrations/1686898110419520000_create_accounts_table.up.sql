@@ -5,12 +5,12 @@ CREATE TABLE accounts(
     ac_currency VARCHAR(255) NOT NULL, 
     ac_created_by UUID,
     ac_status SMALLINT DEFAULT(1), --opened closed
-    ac_type VARCHAR(255) NOT NULL,  
+--       VARCHAR(255) NOT NULL,
     ac_created_at TIMESTAMPTZ DEFAULT(NOW()) 
 );
 
 COMMENT ON TABLE accounts IS 'short code is ac';
-COMMENT ON COLUMN accounts.ac_type IS 'ac_type values = saving,current. actually is a enum';
+-- COMMENT ON COLUMN accounts.ac_type IS 'ac_type values = saving,current. actually is a enum';
 
 ALTER TABLE accounts
 ADD CONSTRAINT fk_ac_created_by
