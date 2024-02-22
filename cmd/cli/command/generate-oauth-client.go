@@ -2,12 +2,12 @@ package command
 
 import (
 	"fmt"
+	"github.com/karkitirtha10/simplebank/models/datamodel"
 
 	"github.com/google/uuid"
 	"github.com/karkitirtha10/simplebank/config"
 	"github.com/karkitirtha10/simplebank/db"
 	"github.com/karkitirtha10/simplebank/enums"
-	datamodel "github.com/karkitirtha10/simplebank/models"
 	"github.com/karkitirtha10/simplebank/repositories"
 	"github.com/spf13/cobra"
 )
@@ -26,6 +26,10 @@ var (
 			config := config.LoadConfig()
 			oauthClientRepository := repositories.NewOAuthClientRepository(db.Connection(config.DbUrl))
 
+			//millisecond time ordered unique id
+			clientId := uuid.Must(uuid.NewV7()).String()
+
+			//unordered unique id (whole id is generated randomly)
 			secret := uuid.New().String()
 			ocType := enums.OAuthClientTypeShortNameEnum(args[0]).ToOAuthClientTypeEnum()
 			if clientName == "" {
@@ -35,6 +39,7 @@ var (
 			ch := make(chan datamodel.InsertOAuthClientResult)
 			go oauthClientRepository.Insert(
 				ch,
+				clientId,
 				clientName,
 				secret,
 				ocType,
@@ -46,9 +51,9 @@ var (
 				panic(insertOAuthClientResult.Err.Error())
 			}
 
-			fmt.Println("client id: " + insertOAuthClientResult.OAuthClient.Id)
-			fmt.Println("client secret: " + insertOAuthClientResult.OAuthClient.Secret)
-
+			fmt.Println("successfully generated " + string(ocType) + " oauth client")
+			fmt.Println("CLIENT ID: " + insertOAuthClientResult.OAuthClient.Id)
+			fmt.Println("CLIENT SECRET: " + insertOAuthClientResult.OAuthClient.Secret)
 		},
 	}
 
@@ -63,9 +68,4 @@ func init() {
 		"",
 		"name of the client. if not supplied, app name will be used as aprt of the client name",
 	)
-
-	//err := viper.BindPFlag("APP_NAME", rootCmd.PersistentFlags().Lookup("appname"))
-	//if err != nil {
-	//	panic(err)
-	//}
 }

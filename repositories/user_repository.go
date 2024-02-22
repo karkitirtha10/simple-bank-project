@@ -46,7 +46,11 @@ func (repo UserRepository) Create(
 }
 
 type IUserRepository interface {
-	FindForEmail(ch chan UserResult, email string, cols string)
+	FindForEmail(
+		ch chan UserResult,
+		email string,
+		cols string,
+	)
 
 	Create(
 		ch chan InsertUserResult,

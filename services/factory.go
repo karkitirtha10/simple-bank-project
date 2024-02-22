@@ -1,18 +1,10 @@
 package services
 
-// import (
-// "github.com/jmoiron/sqlx"
-// handler "github.com/karkitirtha10/simplebank/api/handler/account"
-// 	"github.com/karkitirtha10/simplebank/config"
-// 	"github.com/karkitirtha10/simplebank/repositories"
-// )
-
-// /////////////////new code///////////////////////////////
-func NewAuthService() *AuthService {
-	return &AuthService{NewRSAGenerator()}
+func NewAuthService() IOAuthService {
+	return &JWTService{NewRSAGenerator()}
 }
 
-func NewRSAGenerator() *RSAGenerator {
+func NewRSAGenerator() IRSAGenerator {
 
 	return &RSAGenerator{}
 }

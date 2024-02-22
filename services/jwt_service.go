@@ -8,11 +8,11 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type AuthService struct {
+type JWTService struct {
 	RSAGenerator IRSAGenerator
 }
 
-func (a AuthService) CreateToken(claims jwt.MapClaims, privateKeyPath string) (string, error) {
+func (a JWTService) CreateToken(claims jwt.MapClaims, privateKeyPath string) (string, error) {
 	//   key = /* Load key from somewhere, for example a file SigningMethodRS256*/
 
 	t := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
@@ -33,7 +33,7 @@ func (a AuthService) CreateToken(claims jwt.MapClaims, privateKeyPath string) (s
 	return t.SignedString(loadPrivateKeyFileResult.PrivateKey)
 }
 
-func (a AuthService) ClaimsFromToken(tokenString string, publicKey string) (jwt.Claims, error) {
+func (a JWTService) ClaimsFromToken(tokenString string, publicKey string) (jwt.Claims, error) {
 	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
 		// _, ok := t.Method.(*jwt.SigningMethodRS256)
 		_, ok := t.Method.(*jwt.SigningMethodRSA)
@@ -60,8 +60,8 @@ func (a AuthService) ClaimsFromToken(tokenString string, publicKey string) (jwt.
 }
 
 // declare
-type IAuthService interface {
-	CreateToken(*rsa.PrivateKey) (string, error)
+type IOAuthService interface {
+	CreateToken(claims jwt.MapClaims, privateKeyPath string) (string, error)
 	ClaimsFromToken(tokenString string, publicKey string) (jwt.Claims, error)
 }
 
