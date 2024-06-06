@@ -2,8 +2,8 @@ package command
 
 import (
 	"fmt"
+	"github.com/karkitirtha10/simplebank/app/services"
 
-	"github.com/karkitirtha10/simplebank/services"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

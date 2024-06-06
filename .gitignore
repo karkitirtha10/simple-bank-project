@@ -10,4 +10,6 @@
 auth.json
 /.docker/dev/mysql/db_data
 /.docker/dev/nginx/logs
+/tmp
+/dist
 

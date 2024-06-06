@@ -1,6 +1,7 @@
 package command
 
 import (
+	"github.com/karkitirtha10/simplebank/app"
 	"github.com/karkitirtha10/simplebank/config"
 
 	"github.com/spf13/cobra"
@@ -14,14 +15,16 @@ var (
 			This application is a tool to generate the needed files
 			to quickly create a Cobra application.`,
 	}
+	application app.Application
 )
 
 func init() {
+	application = app.InitializeApp()
 	cobra.OnInitialize(initConfig)
 }
 
 func initConfig() {
-	_ = config.LoadConfig()
+	config.LoadConfig()
 
 	//this below code works but is repaced by LoadConfig
 	/*

@@ -7,6 +7,16 @@ import (
 	"github.com/karkitirtha10/simplebank/config"
 )
 
+// var dbConnection *sqlx.DB
+
+// func init() {
+// 	dbConnection = Connection(config.SingleConfig().DbUrl)
+// }
+
+// func SingleDB() *sqlx.DB {
+// 	return dbConnection
+// }
+
 func Connection(dataSource string) *sqlx.DB {
 	return sqlx.MustConnect("postgres", dataSource)
 }

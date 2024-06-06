@@ -1,0 +1,6 @@
+[requiredValidation]
+#other = "{{.Name}} has {{.Count}} cats."
+other = "The {{.Field}} field is required."
+
+[maxValidation]
+other="The {{.Field}} field must not be greater than {{.Value}}."

@@ -2,16 +2,17 @@ package command
 
 import (
 	"fmt"
-	"github.com/karkitirtha10/simplebank/models/datamodel"
 
 	"github.com/google/uuid"
+	"github.com/karkitirtha10/simplebank/app/enums"
+	"github.com/karkitirtha10/simplebank/app/models/datamodel"
+	"github.com/karkitirtha10/simplebank/app/repositories"
 	"github.com/karkitirtha10/simplebank/config"
-	"github.com/karkitirtha10/simplebank/db"
-	"github.com/karkitirtha10/simplebank/enums"
-	"github.com/karkitirtha10/simplebank/repositories"
 	"github.com/spf13/cobra"
 )
 
+// usage 1: ./dist/simple-bank-cli generate-oauth-client personal
+// usage 2: ./dist/simple-bank-cli generate-oauth-client client --name=khalti-payment-gateway
 var (
 	generateOAuthClient = &cobra.Command{
 		Use:   "generate-oauth-client",
@@ -24,7 +25,7 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 
 			config := config.LoadConfig()
-			oauthClientRepository := repositories.NewOAuthClientRepository(db.Connection(config.DbUrl))
+			oauthClientRepository := repositories.SingleOAuthClientRepository()
 
 			//millisecond time ordered unique id
 			clientId := uuid.Must(uuid.NewV7()).String()
@@ -36,6 +37,7 @@ var (
 				clientName = config.AppName + " " + string(ocType) + " client"
 			}
 
+			//thread
 			ch := make(chan datamodel.InsertOAuthClientResult)
 			go oauthClientRepository.Insert(
 				ch,
@@ -44,7 +46,7 @@ var (
 				secret,
 				ocType,
 				false,
-			)
+			) //thread
 			insertOAuthClientResult := <-ch
 
 			if insertOAuthClientResult.Err != nil {

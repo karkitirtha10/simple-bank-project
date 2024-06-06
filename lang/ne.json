@@ -1,0 +1,25 @@
+{
+  "requiredValidation": {
+    "other": "{{.Field}} आवश्यक छ।"
+  },
+  "maxValidation": {
+    "other":"{{.Field}}को अधिकतम लम्बाइ {{.Param}} भन्दा बढी हुनु हुँदैन।"
+  },
+  "email": {
+    "other":"इमेल"
+  },
+  "password": {
+    "other":"पासवर्ड"
+  },
+  "The given data is invalid": {
+    "other":"दिइएको डाटा मान्य छैन।"
+  },
+  "unauthenticated": {
+    "other":"प्रवेश निषेध ।"
+  },
+  "forbidden": {
+    "other":"अनुमति बिना प्रवेश निषेध ।"
+  }
+}
+
+

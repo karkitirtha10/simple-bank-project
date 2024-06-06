@@ -1,0 +1,15 @@
+# air.toml
+
+# Set the project root directory (adjust as needed)
+root = "."
+
+# Define the temporary directory for build artifacts
+tmp_dir = "tmp"
+
+# Command to build your Go application
+build_cmd = "go build -o ./dist/simple-bank ./cmd/main.go"
+
+# Command to run your application
+run_cmd = "./dist/simple-bank"
+
+# ~/.air --build.cmd "go build -o ./dist/simple-bank ./cmd/main.go" --build.bin "./dist/simple-bank" 

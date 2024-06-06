@@ -35,9 +35,10 @@ build-cli:
 generate-rsa: build-cli
 	$(DIST_DIR)/$(CLI_APP_NAME) generate-rsa 
 
-
+db-seed: build-cli
+	$(DIST_DIR)/$(CLI_APP_NAME) db-seed
 	
-# migrate create -ext sql -dir pkg/common/db/migration -seq $(name)
+# migrate create -ext sql -dir pkg/common/db/migration $(name)
 
 migration-up: build
 	$(DIST_DIR)/$(APP_NAME) migration-up -migrate_step=$(step)
@@ -48,7 +49,10 @@ migration-down: build
 docker-up:
 	docker-compose up -d	
 
+air-hot-reload:
+	~/.air --build.cmd "go build -o ./dist/simple-bank ./cmd/main.go" --build.bin "./dist/simple-bank"
 # migrate -path pkg/common/db/migration -database "postgresql://pgsuperuser:Admin@1@localhost:5432/gotodo?sslmode=disable" -verbose up 	
+# migrate -path db/migrations -database "postgresql://pgsuperuser:Admin@1@localhost:5432/simplebank?sslmode=disable" -verbose up
 
 # Help target to display available targets
 help:

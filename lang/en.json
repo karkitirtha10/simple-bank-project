@@ -1,0 +1,19 @@
+{
+  "requiredValidation": {
+    "other": "The {{.Field}} field is required."
+  },
+  "maxValidation": {
+    "other":"The {{.Field}} field must not be greater than {{.Param}}."
+  },
+  "email": {
+    "other":"email"
+  },
+  "password": {
+    "other":"password"
+  },
+  "The given data is invalid": {
+    "other":"The given data is invalid"
+  }
+}
+
+

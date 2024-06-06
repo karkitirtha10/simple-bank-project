@@ -1,0 +1,14 @@
+
+#validation
+[requiredValidation]
+other = "{{.Field}} आवश्यक छ।"
+
+[maxValidation]
+other="{{.Field}} अधिकतम {{.Value}} भन्दा बढी हुनु हुँदैन।"
+
+#messages transalations
+[email]
+other = "इमेल"
+
+[password]
+other = "पासवर्ड"
