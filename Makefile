@@ -11,8 +11,9 @@ GOFILES := cmd/main.go
 DIST_DIR := ./dist
 step ?= 1
 OAUTH_CLI := cmd/oauth/main.go
+seeder ?=
 
-.PHONY: build clean run generate-rsa build-cli migration-create migration-up migration-down docker-up 
+.PHONY: build clean run generate-rsa build-cli migration-create migration-up migration-down docker-up db-seed
 
 # Build the project
 build: clean
@@ -36,7 +37,7 @@ generate-rsa: build-cli
 	$(DIST_DIR)/$(CLI_APP_NAME) generate-rsa 
 
 db-seed: build-cli
-	$(DIST_DIR)/$(CLI_APP_NAME) db-seed
+	$(DIST_DIR)/$(CLI_APP_NAME) db-seed --seeder=$(seeder)
 	
 # migrate create -ext sql -dir pkg/common/db/migration $(name)
 

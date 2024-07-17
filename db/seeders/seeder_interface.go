@@ -1,6 +1,6 @@
 package seeders
 
 type SeederInterface interface {
-	Seed()
+	Seed() error
 	// Name() string
 }

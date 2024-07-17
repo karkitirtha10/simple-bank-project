@@ -6,7 +6,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/karkitirtha10/simplebank/app/enums"
 	"github.com/karkitirtha10/simplebank/app/models/datamodel"
-	"github.com/karkitirtha10/simplebank/app/repositories"
 	"github.com/karkitirtha10/simplebank/config"
 	"github.com/spf13/cobra"
 )
@@ -25,8 +24,8 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 
 			config := config.LoadConfig()
-			oauthClientRepository := repositories.SingleOAuthClientRepository()
-
+			// oauthClientRepository := repositories.SingleOAuthClientRepository()
+			oauthClientRepository := application.OAuthClientRepository
 			//millisecond time ordered unique id
 			clientId := uuid.Must(uuid.NewV7()).String()
 

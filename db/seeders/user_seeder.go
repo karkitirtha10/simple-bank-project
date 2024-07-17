@@ -2,7 +2,6 @@ package seeders
 
 import (
 	"database/sql"
-	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -15,7 +14,7 @@ type UserSeeder struct {
 	repositories.UserRepositoryInterface
 }
 
-func (yo UserSeeder) Seed() {
+func (yo UserSeeder) Seed() error {
 
 	//seed superadmin
 	hashedPassword, err := bcrypt.
@@ -24,34 +23,33 @@ func (yo UserSeeder) Seed() {
 			bcrypt.DefaultCost,
 		)
 	if err != nil {
-		panic("could not hash password. Failed to seed UserSeeder")
+		return err
 	}
 
 	superAdminId, err1 := uuid.NewV7()
 	if err1 != nil {
-		panic("could not generate v7 uuid. Failed to seed UserSeeder")
+		return err1
 	}
 
 	superAdmin := dbmodel.User{
-		Id:              superAdminId.String(),
-		Name:            "superadmin user",
-		Email:           "superadmin@hisabkitab.com",
-		Password:        string(hashedPassword),
+		Id:       superAdminId.String(),
+		Name:     "superadmin user",
+		Email:    "superadmin@hisabkitab.com",
+		Password: string(hashedPassword),
 		EmailVerifiedAt: sql.NullTime{
-			Time: time.Now(),
+			Time:  time.Now(),
 			Valid: true,
 		},
-		Active:          1,
+		Active: 1,
 	}
 
 	_, err = yo.UserRepositoryInterface.InsertIfEmailNotExists(superAdmin)
+
 	if err != nil {
-		panic("Failed to seed UserSeeder. "+ err.Error())
+		return err
 	}
 
-	//seed admin
-
-	fmt.Println("successfully seeded UserSeeder")
+	return nil
 }
 
 func NewUserSeeder(userRepository repositories.UserRepositoryInterface) SeederInterface {

@@ -4,5 +4,4 @@
     sel_created_at TIMESTAMPTZ DEFAULT(NOW())
  );
 
-
 COMMENT ON TABLE customers IS 'short code is sel.';

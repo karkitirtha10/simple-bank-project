@@ -1,7 +1,6 @@
 package systemerror
 
 import (
-	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
@@ -51,7 +50,7 @@ func (yo ErrorLogger) LogError(logFunc func(*slog.Logger)) {
 
 	defer logFile.Close()
 
-	fmt.Println("1")
+	// fmt.Println("1")
 	// dbLogWriter := NewPostgressDBLogWriter(db.SingleDB())
 	// multiWriter := io.MultiWriter(logFile, dbLogWriter)
 	multiWriter := io.MultiWriter(logFile, yo.PostgressDBLogWriter)

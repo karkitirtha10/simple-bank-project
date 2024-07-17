@@ -11,8 +11,9 @@ type OAuthRefreshTokenRepository struct {
 }
 
 func (yo OAuthRefreshTokenRepository) Insert(
-	ch chan datamodel.InsertOAuthRefreshTokenResult, 
-	oAuthRefreshToken dbmodel.OAuthRefreshToken, cols string
+	ch chan datamodel.InsertOAuthRefreshTokenResult,
+	oAuthRefreshToken dbmodel.OAuthRefreshToken,
+	cols string,
 ) {
 	err := yo.DB.QueryRowx(
 		`
@@ -74,8 +75,8 @@ type IOAuthRefreshTokenRepository interface {
 
 //015970170
 
-func NewOAuthRefreshTokenRepository(db *sqlx.DB) IOAuthRefreshTokenRepository  {
+func NewOAuthRefreshTokenRepository(db *sqlx.DB) IOAuthRefreshTokenRepository {
 	return &OAuthRefreshTokenRepository{
-		DB: db.SingleDB(),
+		DB: db,
 	}
 }

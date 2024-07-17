@@ -1,13 +1,15 @@
 package routes
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/karkitirtha10/simplebank/app"
 	"github.com/karkitirtha10/simplebank/app/api/middleware"
 )
 
-func Register(app app.Application) {
+func Register(app app.Application, r *gin.Engine) {
 	//register api routes here
-	r := app.Router
+	// r := gin.Default()
+	// r := app.Router
 	r.POST("/api/v1/login", app.AuthController.Login)
 
 	authRoute := r.Group(

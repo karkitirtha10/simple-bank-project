@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"io"
 
-	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	"github.com/karkitirtha10/simplebank/app/api/controller"
 	"github.com/karkitirtha10/simplebank/app/handler"
@@ -20,9 +19,9 @@ import (
 )
 
 type Application struct {
-	Config                      *config.Config
-	DB                          *sqlx.DB
-	Router                      *gin.Engine
+	Config *config.Config
+	DB     *sqlx.DB
+	// Router                      *gin.Engine
 	I18nBundle                  *i18n.Bundle
 	UserRepository              repositories.UserRepositoryInterface
 	PostgressDBLogWriter        io.Writer
@@ -37,6 +36,10 @@ type Application struct {
 	LoginHandler                handler.LoginHandlerInterface
 	UserController              controller.UserControllerInterface
 	AuthController              controller.AuthControllerInterface
+	PermissionRepository        repositories.PermissionRepositoryInterface
+	RoleRepository              repositories.RoleRepositoryInterface
+	RolePermissionRepository    repositories.RolePermissionRepositoryInterface
+	RolePermissionPersister     services.RolePermissionPersisterInterface
 }
 
 func InitializeApp() Application {
@@ -68,10 +71,17 @@ func InitializeApp() Application {
 	)
 	loginHandler := handler.NewLoginHandler(userRepo, personalAccessClientService)
 	authController := controller.NewAuthController(loginHandler, errorHandler)
-
+	roleRepository := repositories.NewRoleRepository(db)
+	permissionRepository := repositories.NewPermissionRepository(db)
+	rolePermissionRepository := repositories.NewRolePermissionRepository(db)
+	rolePermissionPersister := services.NewRolePermissionPersister(
+		permissionRepository,
+		roleRepository,
+		rolePermissionRepository,
+	)
 	return Application{
-		Config:                      c,
-		Router:                      gin.Default(),
+		Config: c,
+		// Router:                      gin.Default(),
 		DB:                          db,
 		I18nBundle:                  InitializeInternationalisation(),
 		UserRepository:              userRepo,
@@ -87,6 +97,10 @@ func InitializeApp() Application {
 		LoginHandler:                loginHandler,
 		UserController:              userController,
 		AuthController:              authController,
+		RoleRepository:              roleRepository,
+		PermissionRepository:        permissionRepository,
+		RolePermissionRepository:    rolePermissionRepository,
+		RolePermissionPersister:     rolePermissionPersister,
 	}
 }
 

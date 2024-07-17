@@ -124,7 +124,7 @@ func (yo *PersonalAccessClientService) GenerateForUserAndRefreshTokenId(userId s
 
 	if insertOAuthAccessTokenResult.Err != nil {
 		//return "", err
-		return nil, systemerror.NewServerError(
+		return nil, systemerror.NewServerErrorWithPrevious(
 			insertOAuthAccessTokenResult.Err.Error(),
 			insertOAuthAccessTokenResult.Err,
 		)

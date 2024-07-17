@@ -9,9 +9,7 @@ import (
 	"github.com/karkitirtha10/simplebank/app/enums"
 )
 
-
 // in multitenant system db is created in every request. db will be scoped service. use SingleErrorHandler instead of SingleErrorHandler
-
 
 func NewErrorHandler(
 	errorLogger ErrorLoggerInterface,
@@ -144,7 +142,7 @@ func NewClientError(
 	}
 }
 
-func NewServerError(
+func NewServerErrorWithPrevious(
 	message string,
 	previous error, // can be null
 ) *SystemError {
@@ -156,6 +154,15 @@ func NewServerError(
 		previous:     previous,
 		Source:       NewSource(2),
 	}
+}
+
+func NewServerError(
+	message string,
+) *SystemError {
+	return NewServerErrorWithPrevious(
+		message,
+		nil,
+	)
 }
 
 func FromHttpStatus(
